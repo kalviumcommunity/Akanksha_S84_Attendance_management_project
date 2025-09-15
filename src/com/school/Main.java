@@ -3,42 +3,32 @@ package com.school;
 import java.util.List;
 import java.util.ArrayList;
 
+// Main.java
+
 public class Main {
   public static void main(String[] args) {
-    System.out.println("--- School Attendance System ---");
+    System.out.println("--- School Management System ---");
 
-    Student student1 = new Student("Alice Wonderland");
-    Student student2 = new Student("Bob The Builder");
-    Course course1 = new Course("Intro to Programming");
+    // Create instances of Student, Teacher, and Staff
+    Student student1 = new Student("Alice", "10th Grade");
+    Teacher teacher1 = new Teacher("Mr. Smith", "Mathematics");
+    Staff staff1 = new Staff("Mr. Davis", "Librarian");
 
-    System.out.println("\nRegistered Students:");
+    System.out.println("\nDisplaying Details:");
+    System.out.println("--------------------");
+
+    // Display details for each person
     student1.displayDetails();
-    student2.displayDetails();
+    System.out.println(); // for spacing
+    teacher1.displayDetails();
+    System.out.println(); // for spacing
+    staff1.displayDetails();
+    System.out.println("--------------------");
 
-    System.out.println("\nAvailable Courses:");
-    course1.displayDetails();
-
-    // --- Attendance Recording ---
-    System.out.println("\n--- Attendance Recording ---");
-    List<AttendanceRecord> attendanceLog = new ArrayList<>();
-
-    // Record valid attendance
-    AttendanceRecord record1 = new AttendanceRecord(student1.getStudentId(), course1.getCourseId(), "Present");
-    attendanceLog.add(record1);
-
-    // Attempt to record invalid attendance statusp
-    AttendanceRecord record2 = new AttendanceRecord(student2.getStudentId(), course1.getCourseId(), "Late");
-    attendanceLog.add(record2); // Will be stored as "Invalid"
-
-    // Record another valid attendance
-    AttendanceRecord record3 = new AttendanceRecord(student2.getStudentId(), course1.getCourseId(), "Absent");
-    attendanceLog.add(record3);
-
-    System.out.println("\n--- Attendance Log ---");
-    for (AttendanceRecord record : attendanceLog) {
-      record.displayRecord();
-    }
-
-    System.out.println("\nSession 4: Data Encapsulation & Attendance Recording Complete.");
+    // Example of using getId() for attendance
+    // Assuming an AttendanceRecord class or similar logic exists
+    System.out.println("\nRecording Attendance for Student ID: " + student1.getId());
+    student1.recordAttendance("2025-09-15", true);
+    System.out.println("Attendance for " + student1.getName() + ": " + student1.getAttendance());
   }
 }
