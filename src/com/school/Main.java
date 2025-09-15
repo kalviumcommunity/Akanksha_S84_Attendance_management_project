@@ -1,34 +1,49 @@
 package com.school;
 
-import java.util.List;
 import java.util.ArrayList;
-
-// Main.java
+import java.util.List;
 
 public class Main {
   public static void main(String[] args) {
-    System.out.println("--- School Management System ---");
+    System.out.println("--- School Administration & Attendance System ---");
 
-    // Create instances of Student, Teacher, and Staff
-    Student student1 = new Student("Alice", "10th Grade");
-    Teacher teacher1 = new Teacher("Mr. Smith", "Mathematics");
-    Staff staff1 = new Staff("Mr. Davis", "Librarian");
+    // --- Data Setup ---
+    // Note: Make sure you have a Student class that implements Storable
+    // and has a getId() method.
+    List<Student> students = new ArrayList<>();
+    students.add(new Student("Alice Wonderland", "Grade 10"));
+    students.add(new Student("Bob The Builder", "Grade 9"));
 
-    System.out.println("\nDisplaying Details:");
-    System.out.println("--------------------");
+    List<Course> courses = new ArrayList<>();
+    courses.add(new Course("Intro to Quantum Physics"));
+    courses.add(new Course("Advanced Algorithms"));
 
-    // Display details for each person
-    student1.displayDetails();
-    System.out.println(); // for spacing
-    teacher1.displayDetails();
-    System.out.println(); // for spacing
-    staff1.displayDetails();
-    System.out.println("--------------------");
+    List<AttendanceRecord> attendanceLog = new ArrayList<>();
+    // For accurate IDs, we get them from the objects
+    attendanceLog.add(new AttendanceRecord(students.get(0).getId(), courses.get(0).getCourseId(), "Present"));
+    attendanceLog.add(new AttendanceRecord(students.get(1).getId(), courses.get(0).getCourseId(), "Absent"));
+    attendanceLog.add(new AttendanceRecord(students.get(0).getId(), courses.get(1).getCourseId(), "Present"));
 
-    // Example of using getId() for attendance
-    // Assuming an AttendanceRecord class or similar logic exists
-    System.out.println("\nRecording Attendance for Student ID: " + student1.getId());
-    student1.recordAttendance("2025-09-15", true);
-    System.out.println("Attendance for " + student1.getName() + ": " + student1.getAttendance());
+    System.out.println("\n--- School Personnel & Course Details ---");
+    System.out.println("Students:");
+    for (Student s : students)
+      s.displayDetails();
+    System.out.println("\nCourses:");
+    for (Course c : courses)
+      c.displayDetails();
+    System.out.println("\nAttendance Log (Initial):");
+    for (AttendanceRecord ar : attendanceLog)
+      ar.displayRecord();
+
+    // --- Saving Data ---
+    System.out.println("\n--- Saving Data to Files ---");
+    FileStorageService storageService = new FileStorageService();
+
+    storageService.saveData(students, "students.txt");
+    storageService.saveData(courses, "courses.txt");
+    storageService.saveData(attendanceLog, "attendance_log.txt");
+
+    System.out.println("\nSession 6: Interface-Driven Persistence (Saving) Complete.");
+    System.out.println("Check students.txt, courses.txt, and attendance_log.txt for output.");
   }
 }

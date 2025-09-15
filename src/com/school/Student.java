@@ -3,7 +3,7 @@ package com.school;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Student extends Person {
+public class Student extends Person implements Storable {
     private List<String> attendance = new ArrayList<>();
     private String grade;
 
@@ -32,5 +32,11 @@ public class Student extends Person {
             System.out.print(", Grade: " + grade);
         }
         System.out.println();
+    }
+
+    @Override
+    public String toDataString() {
+        // Format: id,name,grade
+        return id + "," + name + "," + (grade == null ? "" : grade);
     }
 }
