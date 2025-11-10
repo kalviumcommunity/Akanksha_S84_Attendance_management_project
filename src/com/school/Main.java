@@ -1,14 +1,17 @@
 package com.school;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
-  public static void displaySchoolDirectory(List<Person> people) {
+  // displaySchoolDirectory is now better placed in RegistrationService or a
+  // ReportService
+  // For now, let's make it use RegistrationService data
+  public static void displaySchoolDirectory(RegistrationService regService) {
     System.out.println("\n--- School Directory ---");
+    List<Person> people = regService.getAllPeople();
     if (people.isEmpty()) {
-      System.out.println("No people in the directory.");
+      System.out.println("No people registered.");
       return;
     }
     for (Person person : people) {
@@ -17,65 +20,43 @@ public class Main {
   }
 
   public static void main(String[] args) {
-    System.out.println("--- School System (Overloading Demo) ---");
+    System.out.println("--- School System (SRP Demo) ---");
 
     // --- Setup Services ---
     FileStorageService storageService = new FileStorageService();
-    AttendanceService attendanceService = new AttendanceService(storageService);
+    RegistrationService registrationService = new RegistrationService(storageService);
+    // AttendanceService now depends on RegistrationService
+    AttendanceService attendanceService = new AttendanceService(storageService, registrationService);
 
-    // --- Data Setup: Students and Courses ---
-    List<Student> allStudents = new ArrayList<>();
-    Student student1 = new Student("Alice Wonderland", "Grade 10");
-    Student student2 = new Student("Bob The Builder", "Grade 9");
-    Student student3 = new Student("Charlie Chaplin", "Grade 10");
-    allStudents.add(student1);
-    allStudents.add(student2);
-    allStudents.add(student3);
+    // --- Registering Entities via RegistrationService ---
+    System.out.println("\n--- Registering People and Courses ---");
+    Student student1 = registrationService.registerStudent("Alice Wonderland", "Grade 10");
+    Student student2 = registrationService.registerStudent("Bob The Builder", "Grade 9");
+    registrationService.registerTeacher("Dr. Emily Carter", "Physics");
+    registrationService.registerStaff("Mr. John Davis", "Librarian");
 
-    List<Course> allCourses = new ArrayList<>();
-    Course course1 = new Course("Intro to Programming"); // ID will be C101
-    Course course2 = new Course("Data Structures"); // ID will be C102
-    allCourses.add(course1);
-    allCourses.add(course2);
+    Course course1 = registrationService.createCourse("Intro to Programming");
+    Course course2 = registrationService.createCourse("Data Structures");
 
-    List<Person> schoolPeople = new ArrayList<>(allStudents);
-    Teacher teacher1 = new Teacher("Dr. Emily Carter", "Physics");
-    schoolPeople.add(teacher1);
-    displaySchoolDirectory(schoolPeople);
+    // Display directory using data from RegistrationService
+    displaySchoolDirectory(registrationService);
 
-    System.out.println("\n\n--- Marking Attendance (Overloaded Methods) ---");
-    // 1. Mark attendance using Student and Course objects
+    System.out.println("\n\n--- Marking Attendance ---");
+    // Mark attendance using Student and Course objects
     attendanceService.markAttendance(student1, course1, "Present");
-    attendanceService.markAttendance(student2, course1, "Absent");
+    // Mark attendance using studentId and courseId (lookup via RegistrationService)
+    attendanceService.markAttendance(student2.getId(), course1.getCourseId(), "Absent");
+    attendanceService.markAttendance(student1.getId(), course2.getCourseId(), "Tardy"); // Invalid
 
-    // 2. Mark attendance using studentId and courseId (assuming IDs are known or
-    // looked up)
-    // Alice (ID 1) in Data Structures (ID C102)
-    attendanceService.markAttendance(student1.getId(), course2.getCourseId(), "Present", allStudents, allCourses);
-    // Charlie (ID 3) in Intro to Programming (ID C101)
-    attendanceService.markAttendance(student3.getId(), course1.getCourseId(), "Late", allStudents, allCourses); // Invalid
-                                                                                                                // status
+    System.out.println("\n\n--- Querying Attendance ---");
+    attendanceService.displayAttendanceLog(student1); // Log for Alice
+    attendanceService.displayAttendanceLog(); // Full log
 
-    System.out.println("\n\n--- Querying Attendance (Overloaded Methods) ---");
-    // 1. Display full attendance log
-    attendanceService.displayAttendanceLog();
+    // --- Saving Data via Services ---
+    System.out.println("\n\n--- Saving All Data ---");
+    registrationService.saveAllRegistrations();
+    attendanceService.saveAttendanceData();
 
-    // 2. Display attendance for a specific student (Alice)
-    attendanceService.displayAttendanceLog(student1);
-
-    // 3. Display attendance for a specific course (Intro to Programming)
-    attendanceService.displayAttendanceLog(course1);
-
-    // --- Saving Attendance Data ---
-    System.out.println("\n\n--- Saving Attendance Data ---");
-    attendanceService.saveAttendanceData(); // This will save to attendance_log.txt
-
-    // For completeness, we might want to save students and courses too if they
-    // changed
-    // storageService.saveData(allStudents, "students.txt");
-    // storageService.saveData(allCourses, "courses.txt");
-    System.out.println("Student and Course data can be saved similarly if needed.");
-
-    System.out.println("\nSession 8: Overloaded Commands Demonstrated Complete.");
+    System.out.println("\nSession 9: SRP with Registration & Attendance Services Complete.");
   }
 }

@@ -1,10 +1,10 @@
 package com.school;
 
-public class Teacher extends Person {
+public class Teacher extends Person implements Storable { // Implements Storable
   private String subjectTaught;
 
   public Teacher(String name, String subjectTaught) {
-    super(name); // Calls the Person class constructor
+    super(name);
     this.subjectTaught = subjectTaught;
   }
 
@@ -12,10 +12,15 @@ public class Teacher extends Person {
     return subjectTaught;
   }
 
-  // Override the displayDetails method
   @Override
   public void displayDetails() {
-    super.displayDetails(); // Calls the displayDetails method from Person
-    System.out.println("Role: Teacher, Subject: " + subjectTaught);
+    super.displayDetails();
+    System.out.println(", Subject: " + subjectTaught + " (Role: Teacher)");
+  }
+
+  @Override
+  public String toDataString() {
+    // Format: id,name,subjectTaught
+    return getId() + "," + getName() + "," + subjectTaught;
   }
 }
